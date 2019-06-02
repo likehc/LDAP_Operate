@@ -1,0 +1,11 @@
+D:\My_Demo\C#\LDAP_Operate\Main\bin\Debug\Main.exe.config
+D:\My_Demo\C#\LDAP_Operate\Main\bin\Debug\Main.exe
+D:\My_Demo\C#\LDAP_Operate\Main\bin\Debug\Main.pdb
+D:\My_Demo\C#\LDAP_Operate\Main\bin\Debug\LDAP.dll
+D:\My_Demo\C#\LDAP_Operate\Main\bin\Debug\LDAP.pdb
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.csprojResolveAssemblyReference.cache
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.Form1.resources
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.Properties.Resources.resources
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.csproj.GenerateResource.Cache
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.exe
+D:\My_Demo\C#\LDAP_Operate\Main\obj\Debug\Main.pdb

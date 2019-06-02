@@ -1,0 +1,5 @@
+D:\My_Demo\C#\LDAP_Operate\LDAP\bin\Debug\LDAP.dll
+D:\My_Demo\C#\LDAP_Operate\LDAP\bin\Debug\LDAP.pdb
+D:\My_Demo\C#\LDAP_Operate\LDAP\obj\Debug\LDAP.csprojResolveAssemblyReference.cache
+D:\My_Demo\C#\LDAP_Operate\LDAP\obj\Debug\LDAP.dll
+D:\My_Demo\C#\LDAP_Operate\LDAP\obj\Debug\LDAP.pdb
