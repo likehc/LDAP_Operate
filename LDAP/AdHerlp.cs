@@ -17,7 +17,7 @@ namespace LDAP
             string[] DomainNameArr = DomainNameStr.Split(',');
             if (DomainNameArr.Length >=2)
             {
-                domainName = string.Format("@{0}.{1}", DomainNameArr[0].ToLower().Replace("dc=", ""), DomainNameArr[1].ToLower().Replace("dc=", ""));
+                domainName = String.Format("@{0}.{1}", DomainNameArr[0].ToLower().Replace("dc=", ""), DomainNameArr[1].ToLower().Replace("dc=", ""));
             }
             
         }
@@ -56,22 +56,13 @@ namespace LDAP
                 return true;
             }
         }
-        public static void SetPassword(DirectoryEntry newuser ,string adPwd)
+        public static void SetPassword(DirectoryEntry adUser ,string adPwd)
         {
-            //DirectoryEntry usr = new DirectoryEntry();
-            //usr.Path = path;
-            //usr.AuthenticationType = AuthenticationTypes.Secure;
-            
-            //object[] password = new object[] { SetSecurePassword() };
-            //object ret = usr.Invoke("SetPassword", password);
-            //usr.CommitChanges();
-            //usr.Close();
- 
-            newuser.AuthenticationType = AuthenticationTypes.Secure;
+            adUser.AuthenticationType = AuthenticationTypes.Secure;
             object[] password = new object[] { adPwd };
-            object ret = newuser.Invoke("SetPassword", password);
-            newuser.CommitChanges();
-            newuser.Close();
+            object ret = adUser.Invoke("SetPassword", password);
+            adUser.CommitChanges();
+            adUser.Close();
  
         }
       
@@ -79,25 +70,17 @@ namespace LDAP
         /// 获取用户信息
         /// </summary>
         /// <param name="adUser">用户名</param>
-        /// <returns></returns>
-        public static object GetUserDNByName(string adUser) 
+        /// <returns>空时为null，否则为object</returns>
+        public static string GetUserDNByName(string adUser) 
         {
-            //DirectorySearcher userSearch = new DirectorySearcher();
-            //userSearch.SearchRoot = de;
-            //userSearch.Filter = "(SAMAccountName=" + adUser + ")";
-            //SearchResult user = userSearch.FindOne();
-
             DirectorySearcher searcher = new DirectorySearcher(de);
             searcher.Filter = String.Format("(&(objectClass=user)(samAccountName={0}))", adUser);
             SearchResult user = searcher.FindOne();
-
-
             if (user == null)
             {
-                throw new Exception("请确认域用户是否正确");
+                return null;
             }
-            return user.Properties["distinguishedname"][0];
-
+            return user.Properties["distinguishedname"][0].ToString();
         }
 
       
@@ -112,12 +95,12 @@ namespace LDAP
             DirectoryEntry group;
             if (result != null)
             {
-                group = result.GetDirectoryEntry();
+                @group = result.GetDirectoryEntry();
             }
             else {
                 throw new Exception("请确认AD组列表是否正确");
             }
-            return group;
+            return @group;
         }
 
 
@@ -129,18 +112,16 @@ namespace LDAP
         public static void AddUserToGroup(string adUser,string adGroup)
         {
             DirectoryEntry group = getGroupByName(adGroup);
-            group.Username = de.Username;
-            group.Properties["member"].Add(GetUserDNByName(adUser));
-            group.CommitChanges();
-            group.Close();
+            @group.Username = de.Username;
+            @group.Properties["member"].Add(GetUserDNByName(adUser));
+            @group.CommitChanges();
+            @group.Close();
         }
      
-        
-        //public static void CreateNewUser(string employeeID, string name, string login, string email, string group)
         public static void CreateNewUser(string adUser, string adPwd, string adOu = "")
         {
             DirectoryEntry usr;
-            if (string.IsNullOrEmpty(adOu))
+            if (String.IsNullOrEmpty(adOu))
             {
                 usr = de.Children.Add("CN=" + adUser, "user");
             }
@@ -177,86 +158,80 @@ namespace LDAP
            
         }
 
-        public static void DeleteUser(string adUser)
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="adUser">用户名</param>
+        /// <returns>成功删除返回true,否则为false</returns>
+        public static bool DeleteUser(string adUser)
         {
+            bool result = false;
+            DirectorySearcher search = new DirectorySearcher(de);
+            search.Filter = "(&(objectClass=user))";
+            search.SearchScope = SearchScope.Subtree;
+            using (HostingEnvironment.Impersonate())
+            {
+                SearchResultCollection SearchResults = search.FindAll();
+                if (SearchResults.Count > 0)
+                {
+                    foreach (SearchResult sr in SearchResults)
+                    {
+                        DirectoryEntry GroupEntry = sr.GetDirectoryEntry();
+                        if (GroupEntry.Properties.Contains("userPrincipalName"))
+                        {
+                            if (GroupEntry.Properties["displayName"][0].ToString() == adUser)
+                            {
+                                GroupEntry.DeleteTree();
+                                result = true;
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
 
-            DirectoryEntry AD = new DirectoryEntry("LDAP://192.168.88.10", "administrator", "!qaz2wsx");
-            DirectoryEntry NewUser = de.Children.Find("OU=test,CN=user1", "User");
-
-            AD.Children.Remove(NewUser);
-            //AD.CommitChanges();
-
-
-
-
-            //DirectoryEntry ladpRoot = de;
-            //ladpRoot.Username = "administrator";
-            //ladpRoot.Password = "!qaz2wsx";
-            //DirectoryEntry user = ladpRoot.Children.Find("CN=" + adUser, "user");
-            //user.DeleteTree();
-            //user.Close();  
-            //DirectoryEntry usr;
-            //bool userExists = AdHerlp.UserExists(adUser);
-            //if (userExists)
-            //{
-            //    usr = de.Children.Add("CN=" + adUser, "user");
-            //    usr.AuthenticationType = AuthenticationTypes.None;
-            //    //de.Children.Remove(usr);
-            //    usr.DeleteTree();
-            //}
+        /// <summary>
+        /// 修改用户路径
+        /// </summary>
+        /// <param name="cnPath">用户的LDAP路径</param>
+        /// <returns></returns>
+        public static string FixUserPath(string cnPath)
+        {
+            StringBuilder sb = new StringBuilder();
+            string user =String.Empty;
+            string[] cnArr = cnPath.Split(',');
+            for (var i = cnArr.Length - 1; i >= 0; i--)
+            {
+                string[] temp = cnArr[i].Split('=');
+                if (temp[0].ToLower() == "cn")
+                {
+                    user = temp[1];
+                }
+                if (temp[0].ToLower() == "ou")
+                {
+                    sb.Append(temp[1] + "/");
+                }
+            }
+            string result = domainName.Replace("@", "")+"/"+ sb.ToString()+user;
+            return result;
         }
 
         private static void EnableAccount(DirectoryEntry de)
         {
            
-
-            ////UF_DONT_EXPIRE_PASSWD 0x10000
-            //int exp = (int)de.Properties["userAccountControl"].Value;
-            //de.Properties["userAccountControl"].Value = exp | 0x0001;
-            //de.CommitChanges();
-            ////UF_ACCOUNTDISABLE 0x0002
-            //int val = (int)de.Properties["userAccountControl"].Value;
-            //de.Properties["userAccountControl"].Value = val & ~0x0002;
-            //de.CommitChanges();
         }
 
         public static void AddGroup(string adGroup)
         {
-            //DirectoryEntry dom = new DirectoryEntry();
-
-            // Find the container (in this case, the Consulting organizational unit) that you 
-            // wish to add the new group to.
-            //DirectoryEntry ou = dom.Children.Find("OU=Consulting");
-
-            // Add the new group Practice Managers.
             DirectoryEntry group = de.Children.Add("CN=" + adGroup, "group");
-
-            // Set the samAccountName for the new group.
-            group.Properties["samAccountName"].Value = adGroup;
-
-            // Commit the new group to the directory.
-            group.CommitChanges();
-            group.Close();
+            @group.Properties["samAccountName"].Value = adGroup;
+            @group.CommitChanges();
+            @group.Close();
         }
 
-        public static void change(string adUser, string oldPwd, string newPwd)
-        {
-            DirectoryEntry ent = de;
-            DirectoryEntry ou = ent.Children.Find("OU=test");
-
-
-            DirectoryEntry user = ou.Children.Find(adUser);
-            object[] password = new object[] { oldPwd, newPwd };
-            object ret = user.Invoke("ChangePassword", password);
-
-            //DirectoryEntry ent = de;
-            //DirectoryEntry user = ent.Children.Find("OU=Users");
-            ////DirectoryEntry user = ent.Children.Find(adUser, "OU=Users");
-            //object[] password = new object[] { oldPwd, newPwd };
-            //object ret = user.Invoke("ChangePassword", password);
-            user.CommitChanges();
-            user.Close();
-        }
+       
         /// <summary>
         /// 判断OU是否存在
         /// </summary>
@@ -272,7 +247,7 @@ namespace LDAP
             foreach (SearchResult subOU in subOUsearcher.FindAll())
             {
                 string ouNameTemp = subOU.Properties["name"][0].ToString();
-                if (ouNameTemp == ouName)
+                if (ouNameTemp.ToLower() == ouName.ToLower())
                 {
                     result = true;
                     break;
@@ -281,6 +256,10 @@ namespace LDAP
             return result;
         }
 
+        /// <summary>
+        /// 创建组织单元
+        /// </summary>
+        /// <param name="ouName">组织单元名称</param>
         public static void CreateOu(string ouName)
         {
             bool ouExists = OuExists(ouName);
@@ -338,9 +317,9 @@ namespace LDAP
                     foreach (SearchResult sr in SearchResults)
                     {
                         DirectoryEntry GroupEntry = sr.GetDirectoryEntry();
-                        string accountName = string.Empty;
-                        string fullName = string.Empty;
-                        string mail = string.Empty;
+                        string accountName = String.Empty;
+                        string fullName = String.Empty;
+                        string mail = String.Empty;
                         DataRow dr = dt.NewRow();
                         //先获取邮件属性，如果邮件不是空，说明是要取的部门
                         if (GroupEntry.Properties.Contains("userPrincipalName"))
@@ -349,8 +328,6 @@ namespace LDAP
                             //usr.Properties["displayName"].Value = adUser; //显示名称(S)
                             //usr.Properties["userPrincipalName"].Value = adUser;   //用户登录名(U)  
                             //usr.Properties["sAMAccountName"].Value = adUser;    //用户登
-
-                          
 
                             mail = GroupEntry.Properties["userPrincipalName"][0].ToString();
                             dr["userPrincipalName"] = mail;
@@ -376,32 +353,6 @@ namespace LDAP
             }
             return dt;
         }
-        /// <summary>
-        /// 时间格式化
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        private static string ToADDateString(DateTime date)
-        {
-            string year = date.Year.ToString();
-            int month = date.Month;
-            int day = date.Day;
- 
-            StringBuilder sb = new StringBuilder();
-            sb.Append(year);
-            if (month < 10)
-            {
-                sb.Append("0");
-            }
-            sb.Append(month.ToString());
-            if (day < 10)
-            {
-                sb.Append("0");
-            }
-            sb.Append(day.ToString());
-            sb.Append("000000.0Z");
-            return sb.ToString();
-        }
-
+       
     }
 }
