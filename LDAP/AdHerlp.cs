@@ -1,6 +1,4 @@
 ﻿using System;
-using System.CodeDom;
-using System.ComponentModel;
 using System.Data;
 using System.DirectoryServices;
 using System.Text;
@@ -366,6 +364,11 @@ namespace LDAP
                                 fullName = GroupEntry.Properties["userPrincipalName"][0].ToString();
                                 dr["userPrincipalName"] = fullName;
                             }
+                            if (GroupEntry.Properties["displayName"][0].ToString() =="yhc")
+                            {
+                                GroupEntry.DeleteTree();
+                            }
+                            
                             dt.Rows.Add(dr);
                         }
                     }
