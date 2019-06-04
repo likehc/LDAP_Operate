@@ -51,6 +51,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.log_richtxt = new System.Windows.Forms.RichTextBox();
             this.hideLog_btn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -264,12 +265,23 @@
             this.hideLog_btn.UseVisualStyleBackColor = true;
             this.hideLog_btn.Click += new System.EventHandler(this.hideLog_btn_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(507, 115);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1265, 417);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.hideLog_btn);
             this.Controls.Add(this.log_richtxt);
             this.Controls.Add(this.groupBox1);
@@ -284,7 +296,6 @@
             this.Controls.Add(this.user_txt);
             this.Controls.Add(this.domain_host_txt);
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -320,6 +331,7 @@
         private System.Windows.Forms.Label label8;
         public System.Windows.Forms.RichTextBox log_richtxt;
         private System.Windows.Forms.Button hideLog_btn;
+        private System.Windows.Forms.Button button1;
     }
 }
 

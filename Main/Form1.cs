@@ -1,5 +1,6 @@
 ﻿using System;
 using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Threading;
 using System.Web.Hosting;
@@ -228,6 +229,32 @@ namespace Main
                 hideLog_btn.Text = ">>>>>";
                 this.Width = this.Width + 445;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //AdHerlp.GetUserDNByName("test1");
+            //AdHerlp.DeleteUser("test1");
+        /*    PrincipalContext ctx = new PrincipalContext(ContextType.Domain, "192.168.88.10", "Administrators","!qaz2wsx");
+
+            // Create the GroupPrincipal object and set the diplay name property. 
+            GroupPrincipal g = new GroupPrincipal(ctx);
+            g.DisplayName = "Administrators";
+
+            // Create a PrincipalSearcher object.     
+            PrincipalSearcher ps = new PrincipalSearcher(g);
+
+            // Searches for all groups named "Administrators".
+            PrincipalSearchResult<Principal> results = ps.FindAll();*/
+            PrincipalContext context = new PrincipalContext(ContextType.Domain, "192.168.88.10", @"administrator", @"!qaz2wsx");
+            UserPrincipal user = new UserPrincipal(context);
+            user.SetPassword("163.com");
+            user.DisplayName = "heheyhc66";
+            user.Name = "heheyhc66";
+            user.UserCannotChangePassword = true;
+            user.Save();
+            //PrincipalContext ctx = new PrincipalContext(ContextType.Domain, "192.168.88.10", @"test\administrator", "!qaz2wsx");
+
         }
     }
 }

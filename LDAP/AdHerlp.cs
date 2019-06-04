@@ -151,7 +151,8 @@ namespace LDAP
 
             usr.CommitChanges();
             usr.Invoke("SetPassword", new object[] { adPwd });
-            usr.Properties["userAccountControl"].Value = 0x00010000;//永不过期  //512;//0x200; //0x200; //ADS_UF_NORMAL_ACCOUNT
+            //usr.Properties["userAccountControl"].Value = 0x00010000;//永不过期  //512;//0x200; //0x200; //ADS_UF_NORMAL_ACCOUNT //10040
+            usr.Properties["userAccountControl"].Value = 66045;
             usr.CommitChanges();
 
             usr.Close();
