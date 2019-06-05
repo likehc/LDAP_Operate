@@ -97,10 +97,26 @@ namespace Main
                         userPath = AdHerlp.FixUserPath(userPath);
                         AdHerlp.DeleteUser(newUser);
                         InsertLog("删除用户：" + userPath , AddLog.Status.None);
-                    } 
+                    }
+
+                    bool isSuccess;
+                    if (pwdExpire_chk.Checked)
+                    {
+                         isSuccess = AdHerlp.CreateNewUser(newUser, deafultPwd, ou,true);
+                    }
+                    else
+                    {
+                        isSuccess = AdHerlp.CreateNewUser(newUser, deafultPwd, ou);
+                    }
+                    if (isSuccess)
+                    {
+                        InsertLog("创建用户 [" + newUser + "] 创建成功！", AddLog.Status.Success);
+                    }
+                    else
+                    {
+                        InsertLog("创建用户 [" + newUser + "] 创建失败！ 跳过...", AddLog.Status.Fail);
+                    }
                     
-                    AdHerlp.CreateNewUser(newUser, deafultPwd, ou);
-                    InsertLog("创建用户 [" + newUser + "] 创建成功！", AddLog.Status.Success);
                 }
                 InsertLog("所有用户创建完毕!!!!", AddLog.Status.None);
                 
@@ -233,27 +249,7 @@ namespace Main
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //AdHerlp.GetUserDNByName("test1");
-            //AdHerlp.DeleteUser("test1");
-        /*    PrincipalContext ctx = new PrincipalContext(ContextType.Domain, "192.168.88.10", "Administrators","!qaz2wsx");
-
-            // Create the GroupPrincipal object and set the diplay name property. 
-            GroupPrincipal g = new GroupPrincipal(ctx);
-            g.DisplayName = "Administrators";
-
-            // Create a PrincipalSearcher object.     
-            PrincipalSearcher ps = new PrincipalSearcher(g);
-
-            // Searches for all groups named "Administrators".
-            PrincipalSearchResult<Principal> results = ps.FindAll();*/
-            PrincipalContext context = new PrincipalContext(ContextType.Domain, "192.168.88.10", @"administrator", @"!qaz2wsx");
-            UserPrincipal user = new UserPrincipal(context);
-            user.SetPassword("163.com");
-            user.DisplayName = "heheyhc66";
-            user.Name = "heheyhc66";
-            user.UserCannotChangePassword = true;
-            user.Save();
-            //PrincipalContext ctx = new PrincipalContext(ContextType.Domain, "192.168.88.10", @"test\administrator", "!qaz2wsx");
+            
 
         }
     }

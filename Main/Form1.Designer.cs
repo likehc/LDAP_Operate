@@ -51,8 +51,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.log_richtxt = new System.Windows.Forms.RichTextBox();
             this.hideLog_btn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pwdExpire_chk = new System.Windows.Forms.CheckBox();
+            this.pwdCannot_chk = new System.Windows.Forms.CheckBox();
+            this.pwdNext_chk = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // domain_host_txt
@@ -221,6 +225,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.addUser_txt);
             this.groupBox1.Controls.Add(this.label7);
@@ -265,15 +270,51 @@
             this.hideLog_btn.UseVisualStyleBackColor = true;
             this.hideLog_btn.Click += new System.EventHandler(this.hideLog_btn_Click);
             // 
-            // button1
+            // groupBox2
             // 
-            this.button1.Location = new System.Drawing.Point(507, 115);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.groupBox2.Controls.Add(this.pwdCannot_chk);
+            this.groupBox2.Controls.Add(this.pwdNext_chk);
+            this.groupBox2.Controls.Add(this.pwdExpire_chk);
+            this.groupBox2.Location = new System.Drawing.Point(44, 135);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(397, 94);
+            this.groupBox2.TabIndex = 13;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "用户选项";
+            // 
+            // pwdExpire_chk
+            // 
+            this.pwdExpire_chk.AutoSize = true;
+            this.pwdExpire_chk.Checked = true;
+            this.pwdExpire_chk.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pwdExpire_chk.Location = new System.Drawing.Point(24, 67);
+            this.pwdExpire_chk.Name = "pwdExpire_chk";
+            this.pwdExpire_chk.Size = new System.Drawing.Size(119, 19);
+            this.pwdExpire_chk.TabIndex = 17;
+            this.pwdExpire_chk.Text = "密码永不过期";
+            this.pwdExpire_chk.UseVisualStyleBackColor = true;
+            // 
+            // pwdCannot_chk
+            // 
+            this.pwdCannot_chk.AutoSize = true;
+            this.pwdCannot_chk.Enabled = false;
+            this.pwdCannot_chk.Location = new System.Drawing.Point(24, 42);
+            this.pwdCannot_chk.Name = "pwdCannot_chk";
+            this.pwdCannot_chk.Size = new System.Drawing.Size(149, 19);
+            this.pwdCannot_chk.TabIndex = 17;
+            this.pwdCannot_chk.Text = "用户不能更改密码";
+            this.pwdCannot_chk.UseVisualStyleBackColor = true;
+            // 
+            // pwdNext_chk
+            // 
+            this.pwdNext_chk.AutoSize = true;
+            this.pwdNext_chk.Enabled = false;
+            this.pwdNext_chk.Location = new System.Drawing.Point(24, 17);
+            this.pwdNext_chk.Name = "pwdNext_chk";
+            this.pwdNext_chk.Size = new System.Drawing.Size(209, 19);
+            this.pwdNext_chk.TabIndex = 17;
+            this.pwdNext_chk.Text = "用户下次登录时须更改密码";
+            this.pwdNext_chk.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -281,7 +322,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1265, 417);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.hideLog_btn);
             this.Controls.Add(this.log_richtxt);
             this.Controls.Add(this.groupBox1);
@@ -301,6 +341,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,7 +373,10 @@
         private System.Windows.Forms.Label label8;
         public System.Windows.Forms.RichTextBox log_richtxt;
         private System.Windows.Forms.Button hideLog_btn;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox pwdCannot_chk;
+        private System.Windows.Forms.CheckBox pwdNext_chk;
+        private System.Windows.Forms.CheckBox pwdExpire_chk;
     }
 }
 

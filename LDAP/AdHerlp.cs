@@ -117,46 +117,55 @@ namespace LDAP
             @group.CommitChanges();
             @group.Close();
         }
-     
-        public static void CreateNewUser(string adUser, string adPwd, string adOu = "")
+
+        public static bool CreateNewUser(string adUser, string adPwd, string adOu = "", bool noExpire =false)
         {
-            DirectoryEntry usr;
-            if (String.IsNullOrEmpty(adOu))
+            try
             {
-                usr = de.Children.Add("CN=" + adUser, "user");
+                DirectoryEntry usr;
+                if (String.IsNullOrEmpty(adOu))
+                {
+                    usr = de.Children.Add("CN=" + adUser, "user");
+                }
+                else
+                {
+                    DirectoryEntry ou = de.Children.Find("OU=" + adOu);
+                    usr = ou.Children.Add("CN=" + adUser, "user");
+                }
+
+                usr.Properties["sn"].Value = adUser;  //姓(L) 
+                usr.Properties["displayName"].Value = adUser; //显示名称(S)
+                usr.Properties["userPrincipalName"].Value = adUser + domainName;   //用户登录名(U)  
+                usr.Properties["sAMAccountName"].Value = adUser;    //用户登录名2000以前版本
+
+                //usr.Properties["givenName"].Value = "New User";
+                //usr.Properties["initials"].Value = "Ms";   //英文缩写
+                //usr.Properties["sn"].Value = "Name";
+                //usr.Properties["displayName"].Value = "New User Name";
+                //usr.Properties["description"].Value = "Vice President-Operation";
+                //usr.Properties["physicalDeliveryOfficeName"].Value = "40/5802";
+                //usr.Properties["telephoneNumber"].Value = "(425)222-9999";
+                //usr.Properties["mail"].Value = "newuser@fabrikam.com";
+                //usr.Properties["wWWHomePage"].Value = "http://www.fabrikam.com/newuser";
+                //usr.Properties["otherTelephone"].AddRange(new
+                //string[] { "(425)111-2222", "(206)222-5263" });
+                //usr.Properties["url"].AddRange(new string[] { "http://newuser.fabrikam.com", "http://www.fabrikam.com/officers" });
+
+                usr.CommitChanges();
+                usr.Invoke("SetPassword", new object[] { adPwd });
+                if (noExpire)
+                {
+                    usr.Properties["userAccountControl"].Value = 0x00010000;//永不过期  //512;//0x200; //0x200; //ADS_UF_NORMAL_ACCOUNT //10040
+                }
+                
+                usr.CommitChanges();
+                usr.Close();
+                return true;
             }
-            else
+            catch (Exception)
             {
-                DirectoryEntry ou = de.Children.Find("OU=" + adOu);
-                usr = ou.Children.Add("CN=" + adUser, "user");
+                return false;
             }
-          
-            usr.Properties["sn"].Value = adUser;  //姓(L) 
-            usr.Properties["displayName"].Value = adUser; //显示名称(S)
-            usr.Properties["userPrincipalName"].Value = adUser + domainName;   //用户登录名(U)  
-            usr.Properties["sAMAccountName"].Value = adUser;    //用户登录名2000以前版本
-
-            //usr.Properties["givenName"].Value = "New User";
-            //usr.Properties["initials"].Value = "Ms";   //英文缩写
-            //usr.Properties["sn"].Value = "Name";
-            //usr.Properties["displayName"].Value = "New User Name";
-            //usr.Properties["description"].Value = "Vice President-Operation";
-            //usr.Properties["physicalDeliveryOfficeName"].Value = "40/5802";
-            //usr.Properties["telephoneNumber"].Value = "(425)222-9999";
-            //usr.Properties["mail"].Value = "newuser@fabrikam.com";
-            //usr.Properties["wWWHomePage"].Value = "http://www.fabrikam.com/newuser";
-            //usr.Properties["otherTelephone"].AddRange(new
-            //string[] { "(425)111-2222", "(206)222-5263" });
-            //usr.Properties["url"].AddRange(new string[] { "http://newuser.fabrikam.com", "http://www.fabrikam.com/officers" });
-
-            usr.CommitChanges();
-            usr.Invoke("SetPassword", new object[] { adPwd });
-            //usr.Properties["userAccountControl"].Value = 0x00010000;//永不过期  //512;//0x200; //0x200; //ADS_UF_NORMAL_ACCOUNT //10040
-            usr.Properties["userAccountControl"].Value = 66045;
-            usr.CommitChanges();
-
-            usr.Close();
-           
         }
 
         /// <summary>
